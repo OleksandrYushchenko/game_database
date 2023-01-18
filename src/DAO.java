@@ -2,14 +2,15 @@ import java.sql.*;
 
 public class DAO {
     ResultSet resultSet = null;
-
     public DbConnector dbConnector = DbConnector.getInstance();
+    Connection connection = dbConnector.connect();
+
     public void DAO(){
     }
-    public void read(String table){
+    public void read(String table) throws SQLException {
         try {
             String result = "";
-            Statement statement = dbConnector.connect().createStatement();
+            Statement statement = connection.createStatement();
             // Create and execute a SELECT SQL statement.
             String selectSql = "SELECT * FROM" + " " + table;
             resultSet = statement.executeQuery(selectSql);
@@ -26,6 +27,10 @@ public class DAO {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            if (connection != null || !connection.isClosed()) {
+                connection.close();
+            }
         }
     }
     public void create(int id, String table, String first_name, String last_name, String nickname, int password, String email, String logo, String age ) {
